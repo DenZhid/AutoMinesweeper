@@ -2,13 +2,13 @@ package core;
 
 public class GameCell {
 
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
     private int nearMines;
     private boolean anyMine;
+    private int numberOfCell;
     private boolean isFlagged;
     private boolean isOpened = false;
-    private ListenerInterface listener;
 
     public GameCell (int x, int y) {
         this.x = x;
@@ -42,6 +42,10 @@ public class GameCell {
         return isOpened;
     }
 
+    public int getNumberOfCell() {
+        return numberOfCell;
+    }
+
     public void setNearMines(int numberOfMines) {
         this.nearMines = numberOfMines;
     }
@@ -58,7 +62,7 @@ public class GameCell {
         isOpened = true;
     }
 
-    public void setListener(ListenerInterface listener) {
-        this.listener = listener;
+    public void setNumberOfCell(int numb) {
+        this.numberOfCell = numb;
     }
 }

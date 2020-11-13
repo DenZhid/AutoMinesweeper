@@ -32,7 +32,6 @@ public class GameBoard {
                 y = random.nextInt(sizeY);
             }
             arrayOfCells[x][y].setMine();
-            arrayOfCells[x][y].setListener();
         }
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
@@ -81,5 +80,9 @@ public class GameBoard {
 
     public GameCell getGameCell(int x, int y) {
         return arrayOfCells[x][y];
+    }
+
+    public GameCell[][] getArrayOfCells() {
+        return arrayOfCells;
     }
 }
