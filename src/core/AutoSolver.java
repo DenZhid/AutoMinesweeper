@@ -1,5 +1,7 @@
 package core;
 
+import org.omg.PortableInterceptor.INACTIVE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class AutoSolver {
                             if (i + dx >= 0 && j + dy >= 0) {
                                 if (!arrayOfCells[i + dx][j + dy].getConditionOfCell()) {
                                     group.getCells().add(arrayOfCells[i + dx][j + dy]);
-                                }
+                                } //Хорошая идея: Начинать сравнение группы в момент, когда мы её уже создаём
                             }
                         }
                     }
@@ -39,9 +41,26 @@ public class AutoSolver {
             for (int j = i + 1; j < listOfGroups.size(); j++) {
                 Group first = listOfGroups.get(i);
                 Group second = listOfGroups.get(j);
-                if (first.areEquals(second)) listOfGroups.remove(second);
-                else if (first.containsAndRemove(second)) break;
-                else
+                int sizeOfFirst = first.getCells().size();
+                int sizeOfSecond = second.getCells().size();
+                if (sizeOfFirst == sizeOfSecond && first.equalsInCells(second)) {
+                    listOfGroups.remove(j);
+                    break; //Возможна ошибка
+                }
+                else if (sizeOfFirst > sizeOfSecond) {
+                    if (first.remove(second)) break;
+                    else if (first.cross(second) != null) {
+
+                        break;
+                    }
+                }
+                else {
+                    if (second.remove(first)) break;
+                    else if (second.cross(first) != null) {
+
+                        break;
+                    }
+                }
             }
         }
     }
