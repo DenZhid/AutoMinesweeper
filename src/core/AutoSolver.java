@@ -22,8 +22,10 @@ public class AutoSolver {
                     Group group = new Group(new ArrayList<>(), arrayOfCells[i][j].getNearMines());
                     for (int dx = -1; dx <= 1; dx++) {
                         for (int dy = -1; dy <= 1; dy++) {
-                            if (!arrayOfCells[i + dx][j + dy].getConditionOfCell()) {
-                                group.getCells().add(arrayOfCells[i + dx][j + dy]);
+                            if (i + dx >= 0 && j + dy >= 0) {
+                                if (!arrayOfCells[i + dx][j + dy].getConditionOfCell()) {
+                                    group.getCells().add(arrayOfCells[i + dx][j + dy]);
+                                }
                             }
                         }
                     }
@@ -35,9 +37,11 @@ public class AutoSolver {
         }
         for (int i = 0; i < listOfGroups.size(); i++) {
             for (int j = i + 1; j < listOfGroups.size(); j++) {
-                if (listOfGroups.get(i).equals(listOfGroups.get(j))) {
-                    listOfGroups.get(j).getCells().clear();
-                } //доделать
+                Group first = listOfGroups.get(i);
+                Group second = listOfGroups.get(j);
+                if (first.areEquals(second)) listOfGroups.remove(second);
+                else if (first.containsAndRemove(second)) break;
+                else
             }
         }
     }

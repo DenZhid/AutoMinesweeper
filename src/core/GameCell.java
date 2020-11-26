@@ -6,7 +6,6 @@ public class GameCell {
     private final int y;
     private int nearMines;
     private boolean anyMine;
-    private int numberOfCell;
     private boolean isFlagged;
     private boolean isOpened = false;
 
@@ -42,10 +41,6 @@ public class GameCell {
         return isOpened;
     }
 
-    public int getNumberOfCell() {
-        return numberOfCell;
-    }
-
     public void setNearMines(int numberOfMines) {
         this.nearMines = numberOfMines;
     }
@@ -60,9 +55,5 @@ public class GameCell {
 
     public void setOpened() {
         isOpened = true;
-    }
-
-    public void setNumberOfCell(int numb) {
-        this.numberOfCell = numb;
     }
 }

@@ -1,7 +1,6 @@
 package core;
 
 import java.util.List;
-import java.util.Objects;
 
 public class Group {
 
@@ -29,16 +28,19 @@ public class Group {
         this.numberOfBombs = numberOfBombs;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Group group = (Group) o;
-        return Objects.equals(cellsOfGroup, group.cellsOfGroup);
+    public boolean areEquals(Group group) {
+        List<GameCell> other = group.getCells();
+        if (other.size() == cellsOfGroup.size()) {
+            for (int i = 0; i < cellsOfGroup.size(); i++) {
+                GameCell first = cellsOfGroup.get(i);
+                GameCell second = other.get(i);
+                if (first.getX() != second.getX() || first.getY() != second.getY()) return false;
+            }
+        } else return false;
+        return true;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(cellsOfGroup, numberOfBombs);
+    public boolean containsAndRemove(Group group) {
+
     }
 }
