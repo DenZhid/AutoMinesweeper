@@ -4,16 +4,18 @@ import java.util.Random;
 
 public class GameBoard {
 
-    private int sizeX;
-    private int sizeY;
-    private int numberOfBombs;
-    private GameCell[][] arrayOfCells;
+    private final int sizeX;
+    private final int sizeY;
+    private final int numberOfBombs;
+    private int remainder;
+    private final GameCell[][] arrayOfCells;
     private boolean end = false;
 
     public GameBoard(int sizeX, int sizeY, int numberOfBombs) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.numberOfBombs = numberOfBombs;
+        remainder = sizeX * sizeY - numberOfBombs;
         arrayOfCells = new GameCell[sizeX][sizeY];
     }
 
@@ -36,22 +38,15 @@ public class GameBoard {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 if (arrayOfCells[i][j].getMine()) {
-                    arrayOfCells[i][j].setNearMines(this.getNeighbours(i, j));
+                    for (int di = -1; di <= 1; di++) {
+                        for (int dj = -1; dj <= 1; dj++) {
+                            if (i + di >= 0 && j + dj >= 0 && i + di <= sizeX - 1 && j + dj <= sizeY - 1)
+                            arrayOfCells[i + di][j + dj].setNearMines(arrayOfCells[i + di][j +dj].getNearMines() + 1);
+                        }
+                    }
                 }
             }
         }
-    }
-
-    public int getNeighbours(int x, int y) {
-        int result = 0;
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if (arrayOfCells[x + dx][y + dy].getMine()) {
-                    result++;
-                }
-            }
-        }
-        return result;
     }
 
     public ConditionOfGame openCell(GameCell cell) {
@@ -60,8 +55,20 @@ public class GameBoard {
         } else if (cell.getMine()) {
             end = true;
             return ConditionOfGame.LOSE;
-        } else if (!cell.getConditionOfCell() || !cell.getFlag()) {
+        } else if (!cell.getConditionOfCell() && !cell.getFlag()) {
             cell.setOpened();
+            remainder--;
+            if (cell.getNearMines() == 0) {
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        if (
+                                cell.getX() + dx >= 0 && cell.getY() + dy >= 0 && cell.getX() <= sizeX - 1 && cell.getY() <= sizeY - 1 &&
+                                !arrayOfCells[cell.getX() + dx][cell.getY() + dy].getMine()
+                        ) this.openCell(arrayOfCells[cell.getX() + dx][cell.getY() + dy]);
+                    }
+                }
+            }
+            if (remainder == 0) return ConditionOfGame.WIN;
         }
         return ConditionOfGame.CONTINUE;
     }

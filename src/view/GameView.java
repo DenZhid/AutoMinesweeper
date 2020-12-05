@@ -15,7 +15,7 @@ import java.util.EnumMap;
 
 public class GameView {
 
-    private ImageView[][] arrayOfImages;
+    private final ImageView[][] arrayOfImages;
     private EnumMap<ViewSegments, Image> mapOfImages;
     private final GameBoard forGraphics;
 

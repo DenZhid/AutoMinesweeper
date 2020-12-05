@@ -1,16 +1,40 @@
 package core;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Group {
 
-    private List<GameCell> cellsOfGroup;
+    private final List<GameCell> cellsOfGroup;
     private int numberOfBombs;
 
-    public Group(List<GameCell> cellsOfGroup, int numberOfBombs) {
+    public Group(List<GameCell> cellsOfGroup, int numberOfBombs) { //сделать HashSet можно
         this.cellsOfGroup = cellsOfGroup;
         this.numberOfBombs = numberOfBombs;
+    }
+
+    public boolean equalsInCells(Group group) {
+        if (numberOfBombs != group.numberOfBombs) return false;
+        for (int i = 0; i < cellsOfGroup.size(); i++) {
+            GameCell first = cellsOfGroup.get(i);
+            GameCell second = group.cellsOfGroup.get(i);
+            if (!first.equals(second)) return false;
+        }
+        return true;
+    }
+
+    public boolean remove(Group group) {
+        for (GameCell element: group.cellsOfGroup) {
+            if (!cellsOfGroup.contains(element)) return false;
+        }
+        this.subtract(group);
+        return true;
+    }
+
+    private void subtract(Group group) {
+        for (GameCell element: group.getCells()) {
+            cellsOfGroup.remove(element);
+        }
+        numberOfBombs -= group.getBombs();
     }
 
     public List<GameCell> getCells() {
@@ -21,52 +45,22 @@ public class Group {
         return numberOfBombs;
     }
 
-    public void setCells(List<GameCell> cellsOfGroup) {
-        this.cellsOfGroup = cellsOfGroup;
-    }
-
-    public void setNumberOfBombs(int numberOfBombs) {
-        this.numberOfBombs = numberOfBombs;
-    }
-
-    public boolean equalsInCells(Group group) {
-        List<GameCell> other = group.getCells();
-        for (int i = 0; i < cellsOfGroup.size(); i++) {//Возможно стоит ввести size
-            GameCell first = cellsOfGroup.get(i);
-            GameCell second = other.get(i);
-            if (first.getX() != second.getX() || first.getY() != second.getY()) return false;
-        }
-        return true;
-    }
-
-    public boolean remove(Group group) {
-        List<GameCell> other = group.getCells();
-        for (GameCell element: other) {
-            if (!cellsOfGroup.contains(element)) return false;
-        }
-        for (GameCell element: other) {
-            cellsOfGroup.remove(element);//Ошибка в remove
-        }
-        return true;
-    }
-
-    public List<Group> cross(Group group) {
+    /*public Group cross(Group group) {
         List<GameCell> other = group.getCells();
         List<GameCell> cellsForNewGroup = new ArrayList<>();
-        List<Group> result = new ArrayList<>();
         for (GameCell element: other) {
             if (cellsOfGroup.contains(element)) cellsForNewGroup.add(element);
         }
         if (cellsForNewGroup.isEmpty()) return null;
-        int bombsInNewGroup = Math.max(numberOfBombs, group.getBombs()) - (other.size() - cellsForNewGroup.size());
-        if (bombsInNewGroup != Math.min(numberOfBombs, group.getBombs())) {
-            result.add(this);
-            result.add(group);
-            result.add(new Group(cellsForNewGroup, bombsInNewGroup));
-            return result;
-        } //Возможна ошибка
-        for (GameCell element: cellsForNewGroup) {
-            if (cellsOfGroup.contains(element)) {}
+        Group newGroup = new Group(
+                cellsForNewGroup,
+                Math.max(numberOfBombs, group.getBombs()) - (other.size() - cellsForNewGroup.size())
+        );
+        if (newGroup.getBombs() != Math.min(numberOfBombs, group.getBombs())) {
+            return newGroup;
         }
-    }
+        this.subtract(newGroup);
+        group.subtract(newGroup);
+        return newGroup;//Подумать
+    }*/
 }

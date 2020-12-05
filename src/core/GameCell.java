@@ -1,5 +1,7 @@
 package core;
 
+import java.util.Objects;
+
 public class GameCell {
 
     private final int x;
@@ -55,5 +57,19 @@ public class GameCell {
 
     public void setOpened() {
         isOpened = true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameCell gameCell = (GameCell) o;
+        return x == gameCell.x &&
+                y == gameCell.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
