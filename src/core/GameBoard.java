@@ -40,7 +40,7 @@ public class GameBoard {
                 if (arrayOfCells[i][j].getMine()) {
                     for (int di = -1; di <= 1; di++) {
                         for (int dj = -1; dj <= 1; dj++) {
-                            if (i + di >= 0 && j + dj >= 0 && i + di <= sizeX - 1 && j + dj <= sizeY - 1)
+                            if (i + di >= 0 && j + dj >= 0 && i + di <= (sizeX - 1) && j + dj <= (sizeY - 1))
                             arrayOfCells[i + di][j + dj].setNearMines(arrayOfCells[i + di][j +dj].getNearMines() + 1);
                         }
                     }
@@ -62,7 +62,7 @@ public class GameBoard {
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         if (
-                                cell.getX() + dx >= 0 && cell.getY() + dy >= 0 && cell.getX() <= sizeX - 1 && cell.getY() <= sizeY - 1 &&
+                                cell.getX() + dx >= 0 && cell.getY() + dy >= 0 && cell.getX() + dx <= (sizeX - 1) && cell.getY() + dy <= (sizeY - 1) &&
                                 !arrayOfCells[cell.getX() + dx][cell.getY() + dy].getMine()
                         ) this.openCell(arrayOfCells[cell.getX() + dx][cell.getY() + dy]);
                     }

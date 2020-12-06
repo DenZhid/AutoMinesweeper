@@ -10,8 +10,8 @@ import core.GameBoard;
 
 public class ControllerOfMainScreen {
 
-    int numberOfBombs = 5;
-    int sizeOfField  = 5;
+    int numberOfBombs = 10;
+    int sizeOfField  = 10;
     //public static final double WIDTH = 600;
     //public static final double HEIGHT = 400;
 

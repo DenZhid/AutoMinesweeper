@@ -45,22 +45,7 @@ public class Group {
         return numberOfBombs;
     }
 
-    /*public Group cross(Group group) {
-        List<GameCell> other = group.getCells();
-        List<GameCell> cellsForNewGroup = new ArrayList<>();
-        for (GameCell element: other) {
-            if (cellsOfGroup.contains(element)) cellsForNewGroup.add(element);
-        }
-        if (cellsForNewGroup.isEmpty()) return null;
-        Group newGroup = new Group(
-                cellsForNewGroup,
-                Math.max(numberOfBombs, group.getBombs()) - (other.size() - cellsForNewGroup.size())
-        );
-        if (newGroup.getBombs() != Math.min(numberOfBombs, group.getBombs())) {
-            return newGroup;
-        }
-        this.subtract(newGroup);
-        group.subtract(newGroup);
-        return newGroup;//Подумать
-    }*/
+    public void setBombs(int num) {
+        this.numberOfBombs = num;
+    }
 }
