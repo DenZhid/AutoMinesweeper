@@ -16,6 +16,8 @@ public class AutoSolver {
     public ConditionOfGame start() {
         boolean isChanged;
         GameCell[][] arrayOfCells = board.getArrayOfCells();
+        int sizeX = board.getSizeX();
+        int sizeY = board.getSizeY();
         ConditionOfGame lastCondition = board.openCell(arrayOfCells[0][0]);
         if (lastCondition == ConditionOfGame.LOSE) {
             return lastCondition;
@@ -23,19 +25,22 @@ public class AutoSolver {
         while (true) {
             isChanged = false;
             boolean changedAgain = false;
-            for (int i = 0; i < board.getSizeX(); i++) {
-                for (int j = 0; j < board.getSizeY(); j++) {
-                    System.out.println(arrayOfCells[i][j].getNearMines() + "" + arrayOfCells[i][j].getMine());
+            for (int i = 0; i < sizeX; i++) {
+                for (int j = 0; j < sizeY; j++) {
                     if (arrayOfCells[i][j].getConditionOfCell()) {
                         Group group = new Group(new ArrayList<>(), arrayOfCells[i][j].getNearMines());
+                        List<GameCell> cells = group.getCells();
                         for (int dx = -1; dx <= 1; dx++) {
+                            int x = i + dx;
                             for (int dy = -1; dy <= 1; dy++) {
-                                if (i + dx >= 0 && j + dy >= 0 && i + dx <= (board.getSizeX() - 1) && j + dy <= (board.getSizeY() - 1)) {
-                                    if (!arrayOfCells[i + dx][j + dy].getConditionOfCell()) group.getCells().add(arrayOfCells[i + dx][j + dy]);
-                                }
+                                int y = j + dy;
+                                if (
+                                        x >= 0 && y >= 0 && x <= (sizeX - 1) && y <= (sizeY - 1) &&
+                                        !arrayOfCells[x][y].getConditionOfCell()
+                                ) cells.add(arrayOfCells[x][y]);
                             }
                         }
-                        if (!group.getCells().isEmpty() && group.getBombs() != 0 && !listOfGroups.contains(group)) {
+                        if (!cells.isEmpty() && group.getBombs() != 0 && !listOfGroups.contains(group)) {
                             changedAgain = true;
                             listOfGroups.add(0, group);
                             for (int k = 0; k < listOfGroups.size(); k++) {
@@ -44,9 +49,9 @@ public class AutoSolver {
                                     Group second = listOfGroups.get(n);
                                     int sizeOfFirst = first.getCells().size();
                                     int sizeOfSecond = second.getCells().size();
-                                    if (sizeOfFirst == sizeOfSecond && first.equalsInCells(second)) {
+                                    if (sizeOfFirst == sizeOfSecond && first.equalsInCells(second))
                                         listOfGroups.remove(second);
-                                    } else if (sizeOfFirst > sizeOfSecond) {
+                                     else if (sizeOfFirst > sizeOfSecond) {
                                         if (first.remove(second)) k = 0;
                                     } else if (sizeOfFirst < sizeOfSecond){
                                         if (second.remove(first)) k = 0;
@@ -101,18 +106,12 @@ public class AutoSolver {
             }
             if (!isChanged) {
                 Random rnd = new Random();
-                int x = rnd.nextInt(board.getSizeX());
-                int y = rnd.nextInt(board.getSizeY());
-                while (
-                        x > board.getSizeX() - 1 || y > board.getSizeY() - 1 ||
-                                board.getArrayOfCells()[x][y].getConditionOfCell()  ||
-                                board.getArrayOfCells()[x][y].getFlag()
-
-                ) {
-                    x = rnd.nextInt(board.getSizeX());
-                    y = rnd.nextInt(board.getSizeY());
+                int x = rnd.nextInt(sizeX - 1);
+                int y = rnd.nextInt(sizeY - 1);
+                while (arrayOfCells[x][y].getConditionOfCell() || arrayOfCells[x][y].getFlag()) {
+                    x = rnd.nextInt(sizeX - 1);
+                    y = rnd.nextInt(sizeY - 1);
                 }
-                System.out.println("Открываю: " + x + " " + y);
                 lastCondition = board.openCell(arrayOfCells[x][y]);
                 changedAgain = true;
                 if (lastCondition == ConditionOfGame.LOSE || lastCondition == ConditionOfGame.WIN) return lastCondition;
@@ -158,7 +157,7 @@ public class AutoSolver {
                         }
                     }
                 }
-                }
             }
         }
+    }
 }

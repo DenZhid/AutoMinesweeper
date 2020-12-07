@@ -4,10 +4,10 @@ import java.util.List;
 
 public class Group {
 
-    private final List<GameCell> cellsOfGroup;
+    private List<GameCell> cellsOfGroup;
     private int numberOfBombs;
 
-    public Group(List<GameCell> cellsOfGroup, int numberOfBombs) { //сделать HashSet можно
+    public Group(List<GameCell> cellsOfGroup, int numberOfBombs) {
         this.cellsOfGroup = cellsOfGroup;
         this.numberOfBombs = numberOfBombs;
     }
@@ -26,15 +26,11 @@ public class Group {
         for (GameCell element: group.cellsOfGroup) {
             if (!cellsOfGroup.contains(element)) return false;
         }
-        this.subtract(group);
-        return true;
-    }
-
-    private void subtract(Group group) {
-        for (GameCell element: group.getCells()) {
+        for (GameCell element: group.cellsOfGroup) {
             cellsOfGroup.remove(element);
         }
         numberOfBombs -= group.getBombs();
+        return true;
     }
 
     public List<GameCell> getCells() {
@@ -47,5 +43,9 @@ public class Group {
 
     public void setBombs(int num) {
         this.numberOfBombs = num;
+    }
+
+    public void setCellsOfGroup(List<GameCell> cells) {
+        this.cellsOfGroup = cells;
     }
 }

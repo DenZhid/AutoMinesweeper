@@ -27,11 +27,11 @@ public class GameBoard {
         }
         Random random = new Random();
         for (int i = 0; i < numberOfBombs; i++) {
-            int x = random.nextInt(sizeX);
-            int y = random.nextInt(sizeY);
+            int x = random.nextInt(sizeX - 1);
+            int y = random.nextInt(sizeY - 1);
             while (arrayOfCells[x][y].getMine()) {
-                x = random.nextInt(sizeX);
-                y = random.nextInt(sizeY);
+                x = random.nextInt(sizeX - 1);
+                y = random.nextInt(sizeY - 1);
             }
             arrayOfCells[x][y].setMine();
         }
@@ -40,7 +40,7 @@ public class GameBoard {
                 if (arrayOfCells[i][j].getMine()) {
                     for (int di = -1; di <= 1; di++) {
                         for (int dj = -1; dj <= 1; dj++) {
-                            if (i + di >= 0 && j + dj >= 0 && i + di <= (sizeX - 1) && j + dj <= (sizeY - 1))
+                            if (checkBorder(i + di,j + dj))
                             arrayOfCells[i + di][j + dj].setNearMines(arrayOfCells[i + di][j +dj].getNearMines() + 1);
                         }
                     }
@@ -50,9 +50,8 @@ public class GameBoard {
     }
 
     public ConditionOfGame openCell(GameCell cell) {
-        if (getEnd()) {
-            return ConditionOfGame.END;
-        } else if (cell.getMine()) {
+        if (getEnd()) return ConditionOfGame.END;
+        else if (cell.getMine()) {
             end = true;
             return ConditionOfGame.LOSE;
         } else if (!cell.getConditionOfCell() && !cell.getFlag()) {
@@ -60,17 +59,20 @@ public class GameBoard {
             remainder--;
             if (cell.getNearMines() == 0) {
                 for (int dx = -1; dx <= 1; dx++) {
+                    int x = cell.getX() + dx;
                     for (int dy = -1; dy <= 1; dy++) {
-                        if (
-                                cell.getX() + dx >= 0 && cell.getY() + dy >= 0 && cell.getX() + dx <= (sizeX - 1) && cell.getY() + dy <= (sizeY - 1) &&
-                                !arrayOfCells[cell.getX() + dx][cell.getY() + dy].getMine()
-                        ) this.openCell(arrayOfCells[cell.getX() + dx][cell.getY() + dy]);
+                        int y = cell.getY() + dy;
+                        if (checkBorder(x, y) && !arrayOfCells[x][y].getMine()) this.openCell(arrayOfCells[x][y]);
                     }
                 }
             }
             if (remainder == 0) return ConditionOfGame.WIN;
         }
         return ConditionOfGame.CONTINUE;
+    }
+
+    private boolean checkBorder(int x, int y) {
+        return x >= 0 && y >= 0 && x <= (sizeX - 1) &&  y <= (sizeY - 1);
     }
 
     public boolean getEnd() {
@@ -83,10 +85,6 @@ public class GameBoard {
 
     public int getSizeY() {
         return sizeY;
-    }
-
-    public GameCell getGameCell(int x, int y) {
-        return arrayOfCells[x][y];
     }
 
     public GameCell[][] getArrayOfCells() {

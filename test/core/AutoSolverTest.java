@@ -2,38 +2,51 @@ package core;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
+import static core.ConditionOfGame.LOSE;
+import static core.ConditionOfGame.WIN;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AutoSolverTest {
-
+    int sizeX;
+    int sizeY;
+    int numberOfBombs;
+    GameBoard testBoard;
+    AutoSolver solver;
+    ConditionOfGame finalCondition;
 
     @Test
-    void start() {
-            int countOfLoses = 0;
-            int countOfWins = 0;
-            for (int i = 0; i < 100; i++) {
-                Random rnd = new Random();
-                int size = rnd.nextInt(100);
-                while (size < 3) {
-                    size = rnd.nextInt(100);
-                }
-                GameBoard board = new GameBoard(size, size, size);
-                board.createBoard();
-                AutoSolver solver = new AutoSolver(board);
-                ConditionOfGame finalCondition = solver.start();
-                switch (finalCondition) {
-                    case LOSE:
-                        countOfLoses++;
-                        break;
-                    case WIN:
-                        countOfWins++;
-                        break;
-                }
-            }
-            System.out.println(countOfLoses);
-            System.out.println(countOfWins);
-            assertTrue(countOfLoses < countOfWins);
-        }
+    void TestOfStart1() {
+        sizeX = 9;
+        sizeY = 9;
+        numberOfBombs = 10;
+        testBoard = new GameBoard(sizeX, sizeY, numberOfBombs);
+        testBoard.createBoard();
+        solver = new AutoSolver(testBoard);
+        finalCondition = solver.start();
+        assertEquals(WIN, finalCondition, "Бот совершил возможную ошибку");
     }
+
+    @Test
+    void TestOfStart2() {
+        sizeX = 16;
+        sizeY = 16;
+        numberOfBombs = 40;
+        testBoard = new GameBoard(sizeX, sizeY, numberOfBombs);
+        testBoard.createBoard();
+        solver = new AutoSolver(testBoard);
+        finalCondition = solver.start();
+        assertEquals(WIN, finalCondition, "Бот совершил возможную ошибку");
+    }
+
+    @Test
+    void TestOfStart3() {
+        sizeX = 30;
+        sizeY = 16;
+        numberOfBombs = 99;
+        testBoard = new GameBoard(sizeX, sizeY, numberOfBombs);
+        testBoard.createBoard();
+        solver = new AutoSolver(testBoard);
+        finalCondition = solver.start();
+        assertEquals(WIN, finalCondition, "Бот совершил возможную ошибку");
+    }
+}
