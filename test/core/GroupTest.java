@@ -1,11 +1,10 @@
 package core;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class GroupTest {
 
@@ -33,8 +32,12 @@ class GroupTest {
 
     @Test
     void remove() {
-        first = new Group(List.of(new GameCell(0,0), new GameCell(4,4)), 2);
-        second = new Group(List.of(new GameCell(4,4)), 1);
+        first = new Group(new ArrayList<>(), 2);
+        List<GameCell> toAddFirst = List.of(new GameCell(0,0), new GameCell(4,4));
+        first.getCells().addAll(toAddFirst);
+        second = new Group(new ArrayList<>(), 1);
+        List<GameCell> toAddSecond = List.of(new GameCell(4,4));
+        second.getCells().addAll(toAddSecond);
         assertTrue(first.remove(second));
         assertEquals(new Group(List.of(new GameCell(0,0)), 1),first);
     }

@@ -19,7 +19,7 @@ public class AutoSolver {
         int sizeX = board.getSizeX();
         int sizeY = board.getSizeY();
         ConditionOfGame lastCondition = board.openCell(arrayOfCells[0][0]);
-        if (lastCondition == ConditionOfGame.LOSE) {
+        if (lastCondition == ConditionOfGame.LOSE || lastCondition == ConditionOfGame.WIN) {
             return lastCondition;
         }
         while (true) {
@@ -106,11 +106,11 @@ public class AutoSolver {
             }
             if (!isChanged) {
                 Random rnd = new Random();
-                int x = rnd.nextInt(sizeX - 1);
-                int y = rnd.nextInt(sizeY - 1);
+                int x = rnd.nextInt(sizeX);
+                int y = rnd.nextInt(sizeY);
                 while (arrayOfCells[x][y].getConditionOfCell() || arrayOfCells[x][y].getFlag()) {
-                    x = rnd.nextInt(sizeX - 1);
-                    y = rnd.nextInt(sizeY - 1);
+                    x = rnd.nextInt(sizeX);
+                    y = rnd.nextInt(sizeY);
                 }
                 lastCondition = board.openCell(arrayOfCells[x][y]);
                 changedAgain = true;

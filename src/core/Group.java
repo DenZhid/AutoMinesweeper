@@ -1,6 +1,7 @@
 package core;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Group {
 
@@ -47,5 +48,18 @@ public class Group {
 
     public void setCellsOfGroup(List<GameCell> cells) {
         this.cellsOfGroup = cells;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Group group = (Group) o;
+        return numberOfBombs == group.numberOfBombs && Objects.equals(cellsOfGroup, group.cellsOfGroup);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cellsOfGroup, numberOfBombs);
     }
 }

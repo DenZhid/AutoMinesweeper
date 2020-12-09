@@ -2,6 +2,8 @@ package core;
 
 import java.util.Random;
 
+import static core.ConditionOfGame.*;
+
 public class GameBoard {
 
     private final int sizeX;
@@ -25,23 +27,24 @@ public class GameBoard {
                 arrayOfCells[i][j] = new GameCell(i, j);
             }
         }
-        Random random = new Random();
         for (int i = 0; i < numberOfBombs; i++) {
-            int x = random.nextInt(sizeX - 1);
-            int y = random.nextInt(sizeY - 1);
+            int x = getRandomX(sizeX);
+            int y = getRandomY(sizeY);
             while (arrayOfCells[x][y].getMine()) {
-                x = random.nextInt(sizeX - 1);
-                y = random.nextInt(sizeY - 1);
+                x = getRandomX(sizeX);
+                y = getRandomY(sizeY);
             }
-            arrayOfCells[x][y].setMine();
+            arrayOfCells[x][y].setMine(true);
         }
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 if (arrayOfCells[i][j].getMine()) {
                     for (int di = -1; di <= 1; di++) {
+                        int x = i + di;
                         for (int dj = -1; dj <= 1; dj++) {
-                            if (checkBorder(i + di,j + dj))
-                            arrayOfCells[i + di][j + dj].setNearMines(arrayOfCells[i + di][j +dj].getNearMines() + 1);
+                            int y = j + dj;
+                            if (checkBorder(x,y))
+                            arrayOfCells[x][y].setNearMines(arrayOfCells[x][y].getNearMines() + 1);
                         }
                     }
                 }
@@ -50,10 +53,10 @@ public class GameBoard {
     }
 
     public ConditionOfGame openCell(GameCell cell) {
-        if (getEnd()) return ConditionOfGame.END;
+        if (getEnd()) return END;
         else if (cell.getMine()) {
             end = true;
-            return ConditionOfGame.LOSE;
+            return LOSE;
         } else if (!cell.getConditionOfCell() && !cell.getFlag()) {
             cell.setOpened();
             remainder--;
@@ -66,10 +69,23 @@ public class GameBoard {
                     }
                 }
             }
-            if (remainder == 0) return ConditionOfGame.WIN;
+            if (remainder == 0) {
+                end = true;
+                return WIN;
+            }
         }
-        return ConditionOfGame.CONTINUE;
+        return CONTINUE;
     }
+
+    public int getRandomX(int bound) {
+        Random rnd = new Random();
+        return rnd.nextInt(bound);
+    }
+
+    public int getRandomY(int bound) {
+        Random rnd = new Random();
+        return rnd.nextInt(bound);
+    } //Две функции необходимы для упрощения процесса тестирования
 
     private boolean checkBorder(int x, int y) {
         return x >= 0 && y >= 0 && x <= (sizeX - 1) &&  y <= (sizeY - 1);

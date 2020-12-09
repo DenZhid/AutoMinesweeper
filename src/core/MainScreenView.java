@@ -4,19 +4,20 @@ import java.util.Scanner;
 
 public class MainScreenView {
 
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Введите желаемое количество тестов: ");
         int iterations = scanner.nextInt();
-        System.out.print("Введите сторону поля: ");
-        int size = scanner.nextInt();
+        System.out.print("Введите первую сторону поля: ");
+        int sizeX = scanner.nextInt();
+        System.out.print("Введите вторую сторону поля: ");
+        int sizeY = scanner.nextInt();
         System.out.print("Введите количество мин: ");
         int numberOfMines = scanner.nextInt();
         int countOfWins = 0;
         int countOfLoses = 0;
         for (int i = 0; i < iterations; i++) {
-            GameBoard board = new GameBoard(size, size, numberOfMines);
+            GameBoard board = new GameBoard(sizeX, sizeY, numberOfMines);
             board.createBoard();
             AutoSolver solver = new AutoSolver(board);
             ConditionOfGame resultOfOperation = solver.start();

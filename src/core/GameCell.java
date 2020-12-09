@@ -51,8 +51,8 @@ public class GameCell {
         this.isFlagged = condition;
     }
 
-    public void setMine() {
-        anyMine = true;
+    public void setMine(boolean condition) {
+        anyMine = condition;
     }
 
     public void setOpened() {
