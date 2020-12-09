@@ -4,27 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static core.ConditionOfGame.*;
+
 public class AutoSolver {
 
+    private boolean isChanged;
+    private boolean changedAgain;
     private final List<Group> listOfGroups = new ArrayList<>();
     private final GameBoard board;
+    private ConditionOfGame lastCondition;
 
     public AutoSolver(GameBoard board) {
         this.board = board;
     }
 
     public ConditionOfGame start() {
-        boolean isChanged;
         GameCell[][] arrayOfCells = board.getArrayOfCells();
         int sizeX = board.getSizeX();
         int sizeY = board.getSizeY();
-        ConditionOfGame lastCondition = board.openCell(arrayOfCells[0][0]);
-        if (lastCondition == ConditionOfGame.LOSE || lastCondition == ConditionOfGame.WIN) {
+        lastCondition = board.openCell(arrayOfCells[0][0]);
+        if (lastCondition == LOSE || lastCondition == WIN) {
             return lastCondition;
         }
         while (true) {
             isChanged = false;
-            boolean changedAgain = false;
+            changedAgain = false;
             for (int i = 0; i < sizeX; i++) {
                 for (int j = 0; j < sizeY; j++) {
                     if (arrayOfCells[i][j].getConditionOfCell()) {
@@ -40,7 +44,7 @@ public class AutoSolver {
                                 ) cells.add(arrayOfCells[x][y]);
                             }
                         }
-                        if (!cells.isEmpty() && group.getBombs() != 0 && !listOfGroups.contains(group)) {
+                        if (!cells.isEmpty() && group.getBombs() != 0) {
                             changedAgain = true;
                             listOfGroups.add(0, group);
                             for (int k = 0; k < listOfGroups.size(); k++) {
@@ -63,46 +67,8 @@ public class AutoSolver {
                 }
             }
             while (changedAgain) {
-                changedAgain = false;
-                List<Group> groupsToRemove = new ArrayList<>();
-                for (Group element : listOfGroups) {
-                    if (element.getBombs() == 0) {
-                        for (GameCell cell : element.getCells()) {
-                            lastCondition = board.openCell(cell);
-                            if (lastCondition == ConditionOfGame.LOSE || lastCondition == ConditionOfGame.WIN) {
-                                return lastCondition;
-                            }
-                        }
-                        groupsToRemove.add(element);
-                        isChanged = true;
-                        changedAgain = true;
-                    } else if (element.getBombs() == element.getCells().size()) {
-                        for (GameCell cell : element.getCells()) {
-                            if (!cell.getFlag()) {
-                                cell.setFlag(true);
-                                isChanged = true;
-                                changedAgain = true;
-                            }
-                        }
-                    }
-                }
-                for (Group element: groupsToRemove) {
-                    listOfGroups.remove(element);
-                }
-                for (Group element: listOfGroups) {
-                    List<GameCell> cellsToRemove = new ArrayList<>();
-                    for (GameCell cell: element.getCells()) {
-                        if (cell.getConditionOfCell()) {
-                            cellsToRemove.add(cell);
-                        } else if (cell.getFlag() && element.getCells().size() > element.getBombs()) {
-                            cellsToRemove.add(cell);
-                            element.setBombs(element.getBombs() - 1);
-                        }
-                    }
-                    for (GameCell cell: cellsToRemove) {
-                        element.getCells().remove(cell);
-                    }
-                }
+                restructure();
+                if (lastCondition == LOSE || lastCondition == WIN) return lastCondition;
             }
             if (!isChanged) {
                 Random rnd = new Random();
@@ -116,48 +82,54 @@ public class AutoSolver {
                 changedAgain = true;
                 if (lastCondition == ConditionOfGame.LOSE || lastCondition == ConditionOfGame.WIN) return lastCondition;
                 while (changedAgain) {
-                    changedAgain = false;
-                    List<Group> groupsToRemove = new ArrayList<>();
-                    for (Group element : listOfGroups) {
-                        if (element.getBombs() == 0) {
-                            for (GameCell cell : element.getCells()) {
-                                lastCondition = board.openCell(cell);
-                                if (lastCondition == ConditionOfGame.LOSE || lastCondition == ConditionOfGame.WIN) {
-                                    return lastCondition;
-                                }
-                            }
-                            groupsToRemove.add(element);
-                            isChanged = true;
-                            changedAgain = true;
-                        } else if (element.getBombs() == element.getCells().size()) {
-                            for (GameCell cell : element.getCells()) {
-                                if (!cell.getFlag()) {
-                                    cell.setFlag(true);
-                                    isChanged = true;
-                                    changedAgain = true;
-                                }
-                            }
-                        }
+                    restructure();
+                    if (lastCondition == LOSE || lastCondition == WIN) return lastCondition;
+                }
+            }
+        }
+    }
+
+    private void restructure() {
+        changedAgain = false;
+        List<Group> groupsToRemove = new ArrayList<>();
+        for (Group element : listOfGroups) {
+            List<GameCell> cells = element.getCells();
+            int numberOfBombs = element.getBombs();
+            if (numberOfBombs == 0) {
+                for (GameCell cell : cells) {
+                    lastCondition = board.openCell(cell);
+                    if (lastCondition == LOSE || lastCondition == WIN) {
+                        return;
                     }
-                    for (Group element: groupsToRemove) {
-                        listOfGroups.remove(element);
-                    }
-                    for (Group element: listOfGroups) {
-                        List<GameCell> cellsToRemove = new ArrayList<>();
-                        for (GameCell cell: element.getCells()) {
-                            if (cell.getConditionOfCell()) {
-                                cellsToRemove.add(cell);
-                            } else if (cell.getFlag() && element.getCells().size() > element.getBombs()) {
-                                cellsToRemove.add(cell);
-                                element.setBombs(element.getBombs() - 1);
-                            }
-                        }
-                        for (GameCell cell: cellsToRemove) {
-                            element.getCells().remove(cell);
-                        }
+                }
+                groupsToRemove.add(element);
+                isChanged = true;
+                changedAgain = true;
+            } else if (numberOfBombs == cells.size()) {
+                for (GameCell cell : cells) {
+                    if (!cell.getFlag()) {
+                        cell.setFlag(true);
+                        isChanged = true;
+                        changedAgain = true;
                     }
                 }
             }
+        }
+        for (Group element: groupsToRemove) listOfGroups.remove(element);
+        for (Group element: listOfGroups) {
+            List<GameCell> cellsToRemove = new ArrayList<>();
+            List<GameCell> cells = element.getCells();
+            int numberOfBombs = element.getBombs();
+            for (GameCell cell: cells) {
+                if (cell.getConditionOfCell()) {
+                    cellsToRemove.add(cell);
+                } else if (cell.getFlag() && cells.size() > numberOfBombs) {
+                    cellsToRemove.add(cell);
+                    element.setBombs(numberOfBombs - 1);
+                    numberOfBombs = element.getBombs();
+                }
+            }
+            for (GameCell cell: cellsToRemove) cells.remove(cell);
         }
     }
 }

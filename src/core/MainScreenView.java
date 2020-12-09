@@ -26,7 +26,7 @@ public class MainScreenView {
         }
         int percentOfWins = (countOfWins * 100 / iterations);
         int percentOfLoses = (countOfLoses * 100 / iterations);
-        System.out.println("Процент правильных решений: " + percentOfWins);
-        System.out.println("Процент неверных решений: " + percentOfLoses);
+        System.out.println("Процент правильных решений: " + percentOfWins + "%");
+        System.out.println("Процент неверных решений: " + percentOfLoses + "%");
     }
 }
